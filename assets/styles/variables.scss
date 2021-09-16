@@ -1,0 +1,23 @@
+$primary: #000;
+$secondary: #fff;
+
+$darkblue: #0f2247;
+
+$grey: #636363;
+$lightgrey: #e8e8e8;
+$mediumgrey: #c5c5c5;
+
+$primary-text: #37352f;
+$secondary-text: rgba(55, 53, 47, 0.6);
+
+// $primary-bg: #f8f8f8;
+$primary-bg: #fff;
+$secondary-bg: #f7f6f3;
+
+$primary-invert: findColorInvert($primary);
+
+$mobile: "screen and (max-width : 1008px)";
+
+$inputbg: #fafafb;
+
+$modal-background-background-color: rgba(200, 200, 200, 0.53);
