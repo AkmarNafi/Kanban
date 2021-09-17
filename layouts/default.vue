@@ -1,10 +1,8 @@
 <template>
   <div>
-    <section class="main-content columns">
-      <aside class="column is-2 section sidebar">
-        <p class="menu-label is-hidden-touch">
-          General
-        </p>
+    <section class="main-content columns m-0 p-0">
+      <div class="sidebar">
+        <p class="menu-label is-hidden-touch"></p>
         <ul class="menu-list">
           <!-- <li v-for="(item, key) of items" :key="key">
             <NuxtLink :to="item.to" exact-active-class="is-active">
@@ -12,9 +10,9 @@
             </NuxtLink>
           </li> -->
         </ul>
-      </aside>
+      </div>
 
-      <div class="container column is-10">
+      <div class="">
         <Nuxt />
       </div>
     </section>
@@ -27,13 +25,22 @@ export default {
     return {
       items: []
     };
+  },
+  async mounted() {
+    const loadingComponent = this.$buefy.loading.open();
+
+    await this.$store.dispatch("loadFromLocalStorage");
+
+    loadingComponent.close();
   }
 };
 </script>
 
 <style scoped lang="scss">
-aside.sidebar {
+.sidebar {
   background: $secondary-bg;
   height: 100vh;
+  min-width: 250px !important;
+  width: 250px !important;
 }
 </style>

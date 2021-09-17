@@ -203,7 +203,7 @@ h1 {
 /*================================ modal ==============================*/
 
 .modal-background {
-  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .modal-close::before,
@@ -212,14 +212,11 @@ h1 {
 }
 
 .modal-content {
-  padding: 20px 10px 20px 20px;
-  .shadecontent {
-    .closebtn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-    }
-  }
+  padding: 100px 100px 20px 100px;
+  background: white;
+  width: 600px;
+  max-height: 80vh;
+  min-height: 700px;
 }
 
 .closebtn {
@@ -246,6 +243,7 @@ h1 {
 /* Works on Chrome/Edge/Safari */
 *::-webkit-scrollbar {
   width: 7px;
+  height:7px;
   transition: all 1s;
 }
 
@@ -273,4 +271,14 @@ h1 {
 .page-enter,
 .page-leave-to {
   opacity: 0;
+}
+
+/*================================ multiselect ==============================*/
+
+.multiselect__tags {
+  border: none !important;
+  box-shadow: none;
+}
+.multiselect__select:before {
+  border: none !important;
 }

@@ -25,7 +25,10 @@ export default {
   css: ["~/assets/styles/styles.scss"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [
+    { src: "~/plugins/emoji.js", ssr: true },
+    { src: "~/plugins/multiselect.js", ssr: true }
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -62,7 +65,6 @@ export default {
   buefy: {
     css: false,
     defaultIconPack: "mdi",
-    materialDesignIcons: false,
-    materialDesignIconsHRef: "/"
+    materialDesignIcons: true
   }
 };
