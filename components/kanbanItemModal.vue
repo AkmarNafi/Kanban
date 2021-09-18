@@ -1,5 +1,22 @@
 <template>
-  <div class="createNewItem " style="">
+  <div class="kanban-item-modal " style="">
+    <!--====== options dropdown======-->
+    <div class="kanban-options">
+      <b-dropdown aria-role="list" position="is-bottom-left">
+        <template #trigger>
+          <b-icon
+            style="cursor:pointer"
+            icon="dots-horizontal"
+            class="option-icon"
+          >
+          </b-icon>
+        </template>
+
+        <b-dropdown-item aria-role="listitem" @click="deleteItem"
+          >Delete</b-dropdown-item
+        >
+      </b-dropdown>
+    </div>
     <!--====== title input======-->
     <textarea
       v-model="title"
