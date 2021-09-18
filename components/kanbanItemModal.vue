@@ -63,7 +63,9 @@ export default {
 
       columnValue: [],
 
-      id: undefined
+      id: undefined,
+
+      deleted: false
     };
   },
   computed: {
@@ -83,8 +85,12 @@ export default {
   },
 
   beforeDestroy() {
-    //validate inputs
+    if (this.deleted) {
+      //item is deleted, do not set updates
+      return;
+    }
 
+    //validate inputs
     //save changes
     this.$store.dispatch("addOrUpdateKanbanItem", {
       id: this.createMode ? undefined : this.id,
@@ -117,6 +123,15 @@ export default {
     this.$refs.description.innerText = this.description;
   },
   methods: {
+    deleteItem() {
+      this.deleted = true;
+
+      if (this.id) {
+        this.$store.commit("deleteKanbanItem", this.id);
+      }
+
+      this.$emit("close");
+    },
     onDescriptionInput(e) {
       this.description = e.target.innerText;
     },
@@ -135,8 +150,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.createNewItem {
+.kanban-item-modal {
+  padding: 100px 100px 20px 100px;
   width: 100%;
+  position: relative;
+  .kanban-options {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+  }
 }
 
 .desciption-container {

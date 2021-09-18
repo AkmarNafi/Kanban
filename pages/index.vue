@@ -42,7 +42,7 @@
               </div>
             </div>
           </div>
-          <div class="kanban-col-body ">
+          <div class="kanban-col-body">
             <div
               :key="item.id"
               v-for="item in kanbanRenderList[col.id]"
@@ -97,12 +97,14 @@
 
     <b-modal v-model="states.newItemModal" :can-cancel="['escape', 'outside']">
       <kanban-item-modal
+        @close="states.newItemModal = false"
         style="width:100%;"
         :column="currentSelectedColumn"
       ></kanban-item-modal>
     </b-modal>
     <b-modal v-model="states.editItemModal" :can-cancel="['escape', 'outside']">
       <kanban-item-modal
+        @close="states.editItemModal = false"
         style="width:100%;"
         :column="currentSelectedColumn"
         :item="currentSelectedItem"
@@ -224,6 +226,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .body {
   height: 100vh;
 
@@ -234,6 +237,7 @@ export default {
 }
 
 /*======= kanban styles =======*/
+
 .kanban {
   padding-top: 20px;
   margin-top: 20px;
@@ -276,7 +280,6 @@ export default {
   margin-top: -5px;
   font-size: 15px !important;
 }
-
 
 .add-column-btn {
   border: none;

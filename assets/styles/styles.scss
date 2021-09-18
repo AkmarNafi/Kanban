@@ -212,7 +212,6 @@ h1 {
 }
 
 .modal-content {
-  padding: 100px 100px 20px 100px;
   background: white;
   width: 600px;
   max-height: 80vh;
@@ -243,7 +242,7 @@ h1 {
 /* Works on Chrome/Edge/Safari */
 *::-webkit-scrollbar {
   width: 7px;
-  height:7px;
+  height: 7px;
   transition: all 1s;
 }
 
