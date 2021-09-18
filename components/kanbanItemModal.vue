@@ -181,9 +181,11 @@ export default {
 .desciption-container {
   position: relative;
   .desciption {
-    min-height: 100px;
+    min-height: 300px;
     margin-top: 10px;
     border: none !important;
+
+    padding-top: 20px;
   }
   .desciption:focus {
     outline: none;
@@ -191,6 +193,7 @@ export default {
   }
 
   .placeholder {
+    padding-top: 20px;
     position: absolute;
     color: rgba(0, 0, 0, 0.5);
   }

@@ -8,7 +8,7 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "deploy": "nuxt build && gcloud app deploy app.yaml --quiet",
-    "deployStatic": "nuxt build && firebase deploy"
+    "deployStatic": "nuxt generate && firebase deploy"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
