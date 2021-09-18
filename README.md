@@ -2,7 +2,22 @@
 
 Notion style kanban board built in Nuxt
 
-<img src="images/howto.gif" alt="multiline" width="800" >
+<img src="readmeAssets/demo.gif" alt="multiline" width="800" >
+
+<br>
+
+## Features
+
+- Add Kanban items
+- Delete Kanban items
+- Drag and drop item into columns
+- Drag and reorder items in a column
+- Create new column
+- Delete columns
+- Saves data to localStorage
+- No 3rd drag and drop libraries used
+
+<br>
 
 ## Build Setup
 

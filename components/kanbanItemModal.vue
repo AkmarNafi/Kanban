@@ -184,7 +184,7 @@ export default {
     min-height: 300px;
     margin-top: 10px;
     border: none !important;
-
+    background: red;
     padding-top: 20px;
   }
   .desciption:focus {
