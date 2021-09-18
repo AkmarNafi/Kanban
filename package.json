@@ -16,7 +16,6 @@
     "nuxt": "^2.15.7",
     "nuxt-buefy": "^0.4.8",
     "uuid": "^8.3.2",
-    "vue-chat-emoji": "^1.1.27",
     "vue-multiselect": "^2.1.6"
   },
   "devDependencies": {
