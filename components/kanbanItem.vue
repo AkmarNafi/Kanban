@@ -74,21 +74,13 @@ export default {
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
 }
-.kanban-item-options {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.option-icon {
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-  padding: 10px;
-  color: rgba(0, 0, 0, 0.4);
-}
 
 .kanban-item:hover {
   background: #f9f9f8;
+
+  .kanban-item-options {
+    visibility: visible;
+  }
 }
 
 .kanban-item {
@@ -113,6 +105,23 @@ export default {
   .kanban-item-body {
     font-size: 15px;
     color: $secondary-text;
+  }
+  .kanban-item-options {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    visibility: hidden;
+  }
+
+  .option-icon {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    padding: 10px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .option-icon:hover {
+    background: $primary-bg;
   }
 }
 </style>

@@ -226,7 +226,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .body {
   height: 100vh;
 
