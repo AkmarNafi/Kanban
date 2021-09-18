@@ -9,8 +9,8 @@ $mediumgrey: #c5c5c5;
 
 $primary-text: #37352f;
 $secondary-text: rgba(55, 53, 47, 0.6);
-
-// $primary-bg: #f8f8f8;
+$light-text: rgba(55, 53, 47, 0.4);
+$primary-bg: #f8f8f8;
 $primary-bg: #fff;
 $secondary-bg: #f7f6f3;
 
@@ -21,3 +21,5 @@ $mobile: "screen and (max-width : 1008px)";
 $inputbg: #fafafb;
 
 $modal-background-background-color: rgba(200, 200, 200, 0.53);
+
+$border-color: rgb(223, 223, 222);

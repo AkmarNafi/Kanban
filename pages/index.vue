@@ -3,7 +3,7 @@
     <h1>💪 Tasks</h1>
 
     <div class="kanban">
-      <div class="kanban-col-container columns m-0 p-0">
+      <div class="kanban-col-container columns is-mobile m-0 p-0">
         <div
           class="kanban-col  "
           @drop="onDrop($event, col.id)"
@@ -13,44 +13,57 @@
           :key="col.id"
         >
           <div class="kanban-col-header">
-            <div class="columns is-vcentered m-0 p-0">
+            <div class="columns  is-mobile is-vcentered m-0 p-0">
               <div class="kanban-col-name tag">
                 {{ col.name }}
               </div>
-              <div class="kanban-col-count">
+              <div class="kanban-col-count text-secondary">
                 {{ kanbanRenderList[col.id].length }}
               </div>
-            </div>
-          </div>
-          <div class="kanban-col-body drop-zone">
-            <div
-              @click="editKanbanItem(col, item)"
-              v-for="item in kanbanRenderList[col.id]"
-              :key="item.id"
-              class="kanban-item drag-el"
-              draggable
-              @dragstart="startDrag($event, item, col.id)"
-              @dragend="endDrag"
-            >
-              <h3 class="kanban-item-title" v-if="item.title">
-                {{ item.title }}
-              </h3>
-              <h3
-                class="kanban-item-title "
-                v-else
-                style="color:rgba(0,0,0,0.3)"
-              >
-                Untitled
-              </h3>
 
-              <div class="kanban-item-body">
-                {{ item.desc }}
+              <div class="kanban-col-options">
+                <b-dropdown aria-role="list" position="is-bottom-left">
+                  <template #trigger>
+                    <b-icon
+                      style="cursor:pointer"
+                      icon="dots-horizontal"
+                      size="is-small"
+                      class="option-icon"
+                    >
+                    </b-icon>
+                  </template>
+
+                  <b-dropdown-item
+                    aria-role="listitem"
+                    @click="deleteCol(col.id)"
+                    >Delete</b-dropdown-item
+                  >
+                </b-dropdown>
               </div>
             </div>
           </div>
+          <div class="kanban-col-body ">
+            <div
+              :key="item.id"
+              v-for="item in kanbanRenderList[col.id]"
+              draggable
+              @dragend="endDrag"
+              @dragstart="startDrag($event, item, col.id)"
+              @drop="insertAbove($event, col.id, item.id)"
+            >
+              <kanban-item
+                :data="item"
+                @open="editKanbanItem(col, item)"
+                class="kanban-item"
+              >
+              </kanban-item>
+            </div>
+          </div>
+
+          <!--====== new item button ======-->
 
           <b-button
-            class="addItemBtn"
+            class="add-item-btn"
             icon-left="plus"
             @click="openNewItemModal(col)"
           >
@@ -58,11 +71,12 @@
           </b-button>
         </div>
 
+        <!--====== new column button ======-->
         <div class="kanban-col">
           <b-button
             v-if="!states.addNewColumnInputVisible"
             @click="showNewColumnInput"
-            class="addColumnBtn"
+            class="add-column-btn"
             icon-left="plus"
           >
             Add a group
@@ -71,10 +85,10 @@
           <b-input
             v-show="states.addNewColumnInputVisible"
             @blur="crateColumn"
-            ref="addNewColumnInput"
+            ref="add-new-column-input"
             @keyup.native.enter="crateColumn"
             v-model="newColumnValue"
-            class="addNewColumnInput"
+            class="add-new-column-input"
             placeholder="New Column"
           ></b-input>
         </div>
@@ -101,6 +115,7 @@
 import KanbanItemModal from "~/components/kanbanItemModal.vue";
 import { v4 as uuidv4 } from "uuid";
 import { mapState, mapGetters } from "vuex";
+import KanbanItem from "~/components/kanbanItem.vue";
 export default {
   name: "HomePage",
   data() {
@@ -113,22 +128,51 @@ export default {
 
       currentSelectedColumn: {},
       currentSelectedItem: {},
-      newColumnValue: ""
+      newColumnValue: "",
+      pageID: undefined
     };
   },
-  methods: {
-    showNewColumnInput() {
-      this.states.addNewColumnInputVisible = true;
+  mounted() {
+    if (this.$route.params) {
+      this.pageID = this.$route.params;
+    } else {
+      this.pageID = "default";
+    }
+  },
+  components: {
+    KanbanItemModal,
+    KanbanItem
+  },
 
-      console.log(this.$refs.addNewColumnInput.focus());
-      // this.$refs.addNewColumnInput.focus;
-    },
+  computed: {
+    ...mapState({
+      kanbanColumns: "kanbanColumns",
+      kanbanItems: "kanbanItems"
+    }),
+    ...mapGetters(["kanbanRenderList"])
+  },
+
+  methods: {
+    /*------- kanban item menthods -------*/
+
     editKanbanItem(column, item) {
       this.currentSelectedColumn = column;
       this.currentSelectedItem = item;
       this.states.editItemModal = true;
     },
+    openNewItemModal(column) {
+      this.currentSelectedColumn = column;
+      this.states.newItemModal = true;
+    },
 
+    /*------- column menthods -------*/
+
+    showNewColumnInput() {
+      this.states.addNewColumnInputVisible = true;
+
+      this.$refs.addNewColumnInput.focus();
+      // this.$refs.addNewColumnInput.focus;
+    },
     crateColumn() {
       if (this.newColumnValue.trim().length > 0) {
         this.$store.dispatch("createNewColumn", this.newColumnValue);
@@ -136,11 +180,20 @@ export default {
       this.newColumnValue = "";
       this.states.addNewColumnInputVisible = false;
     },
-
-    openNewItemModal(column) {
-      this.currentSelectedColumn = column;
-      this.states.newItemModal = true;
+    deleteCol(columnID) {
+      this.$buefy.dialog.confirm({
+        message: "Are you sure you want to Delete this column",
+        cancelText: "Cancel",
+        confirmText: "Delete",
+        type: "is-danger",
+        onConfirm: () => {
+          this.$store.dispatch("deleteColumn", columnID);
+        }
+      });
     },
+
+    /*------- drag handlers -------*/
+
     startDrag(evt, item, colID) {
       evt.dataTransfer.dropEffect = "move";
       evt.dataTransfer.effectAllowed = "move";
@@ -155,20 +208,17 @@ export default {
       const itemID = evt.dataTransfer.getData("itemID");
 
       this.$store.dispatch("moveKanbanItem", { itemID, toColumnID });
+    },
 
-      // item.list = list;
+    insertAbove(evt, toColumnID, insertAboveID) {
+      const itemID = evt.dataTransfer.getData("itemID");
+
+      this.$store.dispatch("moveKanbanItem", {
+        itemID,
+        toColumnID,
+        insertAboveID
+      });
     }
-  },
-  components: {
-    KanbanItemModal
-  },
-
-  computed: {
-    ...mapState({
-      kanbanColumns: "kanbanColumns",
-      kanbanItems: "kanbanItems"
-    }),
-    ...mapGetters(["kanbanRenderList"])
   }
 };
 </script>
@@ -183,44 +233,7 @@ export default {
   overflow: auto;
 }
 
-.addNewColumnInput {
-  height: 35px;
-  margin-top: -5px;
-  font-size: 15px !important;
-}
-
-.createNewItem {
-  background: white;
-  width: 500px;
-}
-
-.addColumnBtn {
-  border: none;
-  box-shadow: none;
-  width: 100%;
-  text-align: left !important;
-  color: rgba(55, 53, 47, 0.4);
-  margin-top: -5px;
-  justify-content: start;
-  height: 40px;
-}
-.addColumnBtn:hover {
-  background: #efefef;
-}
-
-.addItemBtn {
-  height: 40px;
-  border: none;
-  box-shadow: none;
-  width: 100%;
-  text-align: left !important;
-  color: rgba(55, 53, 47, 0.4);
-  margin-top: 10px;
-  justify-content: start;
-}
-.addItemBtn:hover {
-  background: #efefef;
-}
+/*======= kanban styles =======*/
 .kanban {
   padding-top: 20px;
   margin-top: 20px;
@@ -228,13 +241,10 @@ export default {
     margin-right: 15px;
     width: 320px !important;
     min-width: 320px !important;
-
-    // border: 1px solid blue;
-
     min-height: 500px;
   }
   .kanban-col-container {
-    border-top: 1px solid rgb(223, 223, 222);
+    border-top: 1px solid $border-color;
     padding-top: 20px !important;
     padding-left: 1px !important;
     width: calc(100vw - 250px);
@@ -242,7 +252,6 @@ export default {
     padding-right: 100px !important;
     min-height: calc(100vh - 200px);
     padding-bottom: 50px !important;
-    // background: red;
   }
 
   .kanban-col-header {
@@ -253,59 +262,56 @@ export default {
       margin-right: 10px;
     }
   }
-
-  @mixin grabbing-cursor {
-    cursor: url("https://www.google.com/intl/en_ALL/mapfiles/closedhand.cur"),
-      all-scroll;
-    cursor: -webkit-grabbing;
-    cursor: -moz-grabbing;
-    cursor: -o-grabbing;
-    cursor: -ms-grabbing;
-    cursor: grabbing;
-  }
-
-  .kanban-item:active {
-    @include grabbing-cursor;
-    cursor: grabbing;
-    cursor: -moz-grabbing;
-    cursor: -webkit-grabbing;
-  }
-
-  .kanban-item:hover {
-    background: #f9f9f8;
-  }
-  .kanban-item {
-    cursor: pointer;
-
-    display: block;
-    width: 100%;
-
-    box-shadow: rgb(15 15 15 / 10%) 0px 0px 0px 1px,
-      rgb(15 15 15 / 10%) 0px 2px 4px;
-    border-radius: 4px;
-    padding: 10px;
-    margin-top: 10px;
-    .kanban-item-title {
-      font-weight: 500;
-
-      font-size: 17px;
-      margin-bottom: 5px;
-    }
-
-    .kanban-item-body {
-      font-size: 15px;
-      color: $secondary-text;
-    }
-  }
 }
 
-.shot {
-  position: absolute;
+/*======= column styles =======*/
+
+.kanban-col-options {
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.add-new-column-input {
+  height: 35px;
+  margin-top: -5px;
+  font-size: 15px !important;
+}
+
+
+.add-column-btn {
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  text-align: left !important;
+  color: $light-text;
+  margin-top: -5px;
+  justify-content: start;
+  height: 40px;
+}
+
+.add-item-btn {
+  height: 40px;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  text-align: left !important;
+  color: $secondary-text;
+  margin-top: 10px;
+  justify-content: start;
+}
+.add-item-btn:hover {
+  background: #efefef;
+}
+
+/*======= others =======*/
+.option-icon {
+  color: $secondary-text;
+  font-size: 18px;
 }
 </style>
 
 <style lang="scss">
-.addNewColumnInput input {
+.add-new-column-input input {
   font-size: 15px !important;
 }
 </style>

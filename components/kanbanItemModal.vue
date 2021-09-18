@@ -1,13 +1,16 @@
 <template>
   <div class="createNewItem " style="">
+    <!--====== title input======-->
     <textarea
       v-model="title"
       placeholder="Untitled"
       @keydown.enter.prevent
+      ref="titleTextArea"
     ></textarea>
 
+    <!--====== status picker======-->
     <div class="columns m-0 p-0 ">
-      <div class="options-label text-secondary">Column</div>
+      <div class="options-label text-secondary">Status</div>
       <div class="options-body">
         <multiselect
           v-if="columnOptions"
@@ -15,7 +18,7 @@
           v-model="columnValue"
           :options="columnOptions"
           :taggable="true"
-          @tag="addTag"
+          @tag="addStatusTag"
           label="name"
           track-by="id"
           :multiple="true"
@@ -31,12 +34,18 @@
     </div>
 
     <hr />
-    <div
-      class="desciption"
-      ref="description"
-      contenteditable
-      @input="event => onInput(event)"
-    />
+    <!--====== description input======-->
+    <div class="desciption-container">
+      <div class="placeholder" v-if="!description">
+        Type Here
+      </div>
+      <div
+        class="desciption"
+        ref="description"
+        contenteditable
+        @input="event => onDescriptionInput(event)"
+      />
+    </div>
   </div>
 </template>
 
@@ -53,6 +62,7 @@ export default {
       description: "",
 
       columnValue: [],
+
       id: undefined
     };
   },
@@ -73,8 +83,9 @@ export default {
   },
 
   beforeDestroy() {
-
     //validate inputs
+
+    //save changes
     this.$store.dispatch("addOrUpdateKanbanItem", {
       id: this.createMode ? undefined : this.id,
       title: this.title,
@@ -85,17 +96,18 @@ export default {
 
   mounted() {
     if (this.$props.item === undefined) {
+      //if no item then create mode
       this.createMode = true;
 
       if (this.$props.column && this.$props.column.id) {
         this.columnValue = [this.$props.column];
       }
     } else {
+      //if item then edit  mode
       this.createMode = false;
 
       let currentItem = this.$props.item;
 
-      console.log(currentItem);
       this.id = currentItem.id;
       this.title = currentItem.title;
       this.description = currentItem.desc;
@@ -105,17 +117,11 @@ export default {
     this.$refs.description.innerText = this.description;
   },
   methods: {
-    onInput(event, index) {
-      const value = event.target.innerText;
-      this.content[index].value = value;
-    },
-
-    // },
-    onInput(e) {
+    onDescriptionInput(e) {
       this.description = e.target.innerText;
     },
 
-    addTag(x) {
+    addStatusTag(x) {
       const tag = {
         name: x,
         id: uuidv4()
@@ -130,16 +136,25 @@ export default {
 
 <style scoped lang="scss">
 .createNewItem {
-  background: blue;
   width: 100%;
 }
-.desciption {
-  margin-top: 10px;
-  border: none !important;
-}
-.desciption:focus {
-  outline: none;
-  border: none !important;
+
+.desciption-container {
+  position: relative;
+  .desciption {
+    min-height: 100px;
+    margin-top: 10px;
+    border: none !important;
+  }
+  .desciption:focus {
+    outline: none;
+    border: none !important;
+  }
+
+  .placeholder {
+    position: absolute;
+    color: rgba(0, 0, 0, 0.5);
+  }
 }
 textarea {
   font-size: 40px;
